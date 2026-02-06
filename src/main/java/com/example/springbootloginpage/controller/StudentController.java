@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.springbootloginpage.exception.StudentAlreadyExistsException;
 import com.example.springbootloginpage.model.StudentModel;
 import com.example.springbootloginpage.service.StudentService;
 
@@ -37,12 +38,16 @@ public class StudentController {
             return "login";
         }
         
-        
-        //save to databases
-        studentservice.savestudent(studentmodel);
+        try {
+            studentservice.savestudent(studentmodel);
+            model.addAttribute("msg", "Login Successfully");
+        } catch (StudentAlreadyExistsException e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        }
 
-        model.addAttribute("msg", "Login Successfully");
-        return "redirect:/";
+        
+        return "signin";
     }
     
     @GetMapping("/signin")

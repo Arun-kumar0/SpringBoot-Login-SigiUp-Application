@@ -2,13 +2,13 @@ package com.example.springbootloginpage.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.springbootloginpage.exception.StudentAlreadyExistsException;
 import com.example.springbootloginpage.model.StudentModel;
 import com.example.springbootloginpage.repository.StudentRepo;
 
 
 @Service
 public class StudentService {
-
 	private final StudentRepo studentrepo;
 	
 	 public StudentService (StudentRepo studentrepo) {
@@ -16,6 +16,12 @@ public class StudentService {
 	 }
 	 
 	 public void savestudent(StudentModel model) {
+		 
+		// Check if email already exists
+	        if (studentrepo.findByEmail(model.getEmail()).isPresent()) {
+	            throw new StudentAlreadyExistsException("Email already registered");
+	        }
+	        
 		 StudentModel student = new StudentModel();
 		 student.setName(model.getName());
 		 student.setEmail(model.getEmail());
@@ -25,12 +31,8 @@ public class StudentService {
 	 }
 	 
 	 public boolean validationuser(String email, String password) {
-		 StudentModel studentmodel = studentrepo.findByEmail(email);
-		 
-		 if(studentmodel==null) {
-			 return false;
-		 }
-		 return studentmodel.getPassword().equals(password);
+		 return studentrepo.findByEmail(email)
+	                .map(student -> student.getPassword().equals(password))
+	                .orElse(false);
 	 }
-
 }

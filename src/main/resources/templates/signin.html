@@ -22,7 +22,7 @@
 		<button type="submit" id="login-btn">Signin</button>
 		<p id="signin">Dont have Account?<a th:href="@{/}">Login</a></p>
 		
-		<p th:text="${error}" style="color:red"></p>
+		<p th:text="${error}" style="color:red">[[${error}]]</p>
 	</form>
 	</div>
 	</div>
